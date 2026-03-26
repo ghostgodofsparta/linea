@@ -1,16 +1,17 @@
 /* ── Global Reset & Variables ── */
 :root {
-  --cobalt: #1a4a8a;
-  --cobalt-light: #2a6abf;
-  --cobalt-pale: #d6e4f7;
-  --terra: #c4633a;
-  --terra-light: #e07d52;
-  --terra-pale: #f5e0d5;
-  --cream: #f5f0e8;
-  --cream-dark: #ede5d5;
-  --ink: #1c1c1a;
-  --ink-muted: #5a5755;
-  --white: #fefefe;
+  /* Option C — Olive Coast */
+  --cobalt: #1E3A5F;       /* deep sea */
+  --cobalt-light: #2E5C8F; /* sea-glass */
+  --cobalt-pale: #DDE9F1;  /* mist */
+  --terra: #B85E3C;        /* terracotta */
+  --terra-light: #D6805D;  /* sunbaked clay */
+  --terra-pale: #F6E2D8;   /* clay wash */
+  --cream: #F3EFE6;        /* limestone */
+  --cream-dark: #E7DECE;   /* warm sand */
+  --ink: #161513;          /* charcoal */
+  --ink-muted: #5E5A54;    /* softened ink */
+  --white: #FFFEFA;        /* warm white */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,6 +24,10 @@ body {
   overflow-x: hidden;
   cursor: auto;
 }
+
+/* Improve mobile viewport + prevent accidental horizontal scroll */
+img, video, canvas, svg { max-width: 100%; height: auto; }
+* { min-width: 0; }
 
 /* ── Nav ── */
 nav {
@@ -471,3 +476,52 @@ footer {
   pointer-events: none;
 }
 .toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  nav { padding: 1.4rem 2.25rem; }
+  nav.scrolled { padding: 1rem 2.25rem; }
+  section { padding: 6rem 2.25rem; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  #about { gap: 3.25rem; }
+  .contact-grid { gap: 3.25rem; }
+}
+
+@media (max-width: 720px) {
+  nav { padding: 1.1rem 1.25rem; flex-wrap: wrap; gap: 0.8rem; }
+  nav.scrolled { padding: 0.9rem 1.25rem; }
+  .nav-links { gap: 1.25rem; flex-wrap: wrap; }
+  .nav-cta { display: none; }
+
+  #hero {
+    height: auto;
+    min-height: unset;
+    grid-template-columns: 1fr;
+  }
+  .hero-left { padding: 7rem 1.25rem 3.5rem 1.25rem; }
+  .hero-right { min-height: 360px; }
+  .hero-actions { flex-wrap: wrap; gap: 1rem; }
+  .btn-primary { padding: 0.95rem 1.6rem; }
+  .hero-img-text { font-size: 4.5rem; right: 1rem; }
+  .hero-model-card { left: 1rem; bottom: 1rem; }
+  .hero-scroll { display: none; }
+
+  section { padding: 5rem 1.25rem; }
+
+  .filter-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .filter-btn { white-space: nowrap; padding: 0.8rem 1.1rem; }
+
+  .products-grid { grid-template-columns: 1fr; }
+
+  #about { grid-template-columns: 1fr; }
+  .about-visual { height: 420px; }
+  .about-deco-text { font-size: 5.5rem; }
+
+  #contact .contact-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+
+  footer { padding: 2.25rem 1.25rem; }
+  .footer-links { gap: 1.25rem; flex-wrap: wrap; }
+
+  .toast { left: 1rem; right: 1rem; bottom: 1rem; }
+}
