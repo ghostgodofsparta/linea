@@ -41,6 +41,7 @@ export default function App() {
       <About />
       <Contact showToast={showToast} />
       <Footer />
+      <a href="#collections" className="mobile-sticky-cta">Shop Collection</a>
       <Toast message={toastMsg} />
     </>
   )

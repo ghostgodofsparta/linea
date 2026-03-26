@@ -14,6 +14,11 @@ export default function Hero() {
           <a href="#collections" className="btn-primary">Explore Collection</a>
           <a href="#about" className="btn-ghost">Our Story</a>
         </div>
+        <div className="hero-trust">
+          <span>Free shipping over EUR 120</span>
+          <span>Easy 30-day returns</span>
+          <span>Secure checkout</span>
+        </div>
       </div>
 
       <div className="hero-right">

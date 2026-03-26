@@ -29,9 +29,23 @@ function ProductCard({ product, index, showToast }) {
   }, [])
 
   const badgeNew = product.badge?.toLowerCase() === 'new'
+  const onQuickView = () => showToast(`"${product.title}" quick view coming soon`)
 
   return (
-    <div ref={ref} className={`product-card reveal ${delayClasses[index % 4]}`}>
+    <div
+      ref={ref}
+      className={`product-card reveal ${delayClasses[index % 4]}`}
+      onClick={onQuickView}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onQuickView()
+        }
+      }}
+      aria-label={`View ${product.title}`}
+    >
       <div className="product-image">
         <div className="product-bg" style={{ background: product.accentColor || '#e8d5c8' }}>
           {product.image
@@ -54,10 +68,24 @@ function ProductCard({ product, index, showToast }) {
           )}
         </div>
         <div className="product-actions">
-          <button className="action-btn primary" onClick={() => showToast(`"${product.title}" added to bag`)}>
+          <button
+            className="action-btn primary"
+            onClick={(e) => {
+              e.stopPropagation()
+              showToast(`"${product.title}" added to bag`)
+            }}
+          >
             Add to Bag
           </button>
-          <button className="action-btn secondary">Wishlist</button>
+          <button
+            className="action-btn secondary"
+            onClick={(e) => {
+              e.stopPropagation()
+              showToast(`"${product.title}" wishlisted`)
+            }}
+          >
+            Wishlist
+          </button>
         </div>
       </div>
       <div className="product-info">
