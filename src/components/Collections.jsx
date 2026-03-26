@@ -19,6 +19,7 @@ const delayClasses = ['reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3', 'rev
 function ProductCard({ product, index, showToast }) {
   const navigate = useNavigate()
   const ref = useRef(null)
+  const previewImage = product.image || product.images?.[0]
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -50,9 +51,9 @@ function ProductCard({ product, index, showToast }) {
     >
       <div className="product-image">
         <div className="product-bg" style={{ background: product.accentColor || '#e8d5c8' }}>
-          {product.image
+          {previewImage
             ? <img
-                src={urlFor(product.image).width(600).url()}
+                src={urlFor(previewImage).width(600).url()}
                 alt={product.title}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
               />

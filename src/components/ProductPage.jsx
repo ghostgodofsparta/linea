@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
+import { PortableText } from '@portabletext/react'
 import { Link, useParams } from 'react-router-dom'
 import { getProductById, getSimilarProducts, urlFor } from '../sanity'
 
 function SimilarCard({ item, showToast }) {
+  const previewImage = item.image || item.images?.[0]
+
   return (
     <article className="similar-card">
       <Link to={`/product/${item._id}`} className="similar-image-link" aria-label={`View ${item.title}`}>
         <div className="similar-image" style={{ background: item.accentColor || '#e8d5c8' }}>
-          {item.image && (
-            <img src={urlFor(item.image).width(560).url()} alt={item.title} />
+          {previewImage && (
+            <img src={urlFor(previewImage).width(560).url()} alt={item.title} />
           )}
-          {!item.image && <span className="similar-placeholder">{item.title?.charAt(0)}</span>}
+          {!previewImage && <span className="similar-placeholder">{item.title?.charAt(0)}</span>}
         </div>
       </Link>
       <div className="similar-meta">
@@ -33,6 +36,8 @@ export default function ProductPage({ showToast }) {
   const { productId } = useParams()
   const [product, setProduct] = useState(null)
   const [similar, setSimilar] = useState([])
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [selectedSize, setSelectedSize] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -51,9 +56,12 @@ export default function ProductPage({ showToast }) {
           return
         }
         setProduct(p)
+        setSelectedImageIndex(0)
+        setSelectedSize(p.sizes?.[0] || '')
         const recommended = await getSimilarProducts({
           productId: p._id,
           sex: p.sex,
+          subcategory: p.subcategory,
           category: p.category,
         })
         if (!mounted) return
@@ -91,17 +99,35 @@ export default function ProductPage({ showToast }) {
     )
   }
 
+  const galleryImages = [product.image, ...(product.images || [])].filter(Boolean)
+  const activeImage = galleryImages[selectedImageIndex] || galleryImages[0]
+  const showSizePicker = Array.isArray(product.sizes) && product.sizes.length > 0
+
   return (
     <main className="product-page">
       <section className="product-main">
         <div className="product-gallery">
           <div className="product-detail-image" style={{ background: product.accentColor || '#e8d5c8' }}>
-            {product.image && (
-              <img src={urlFor(product.image).width(1200).url()} alt={product.title} />
+            {activeImage && (
+              <img src={urlFor(activeImage).width(1200).url()} alt={product.title} />
             )}
-            {!product.image && <span className="similar-placeholder">{product.title?.charAt(0)}</span>}
+            {!activeImage && <span className="similar-placeholder">{product.title?.charAt(0)}</span>}
             {product.badge && <span className="product-tag-overlay product-detail-badge">{product.badge}</span>}
           </div>
+          {galleryImages.length > 1 && (
+            <div className="product-thumbs">
+              {galleryImages.map((img, i) => (
+                <button
+                  key={`${product._id}-img-${i}`}
+                  className={`product-thumb ${selectedImageIndex === i ? 'active' : ''}`}
+                  onClick={() => setSelectedImageIndex(i)}
+                  aria-label={`Select product image ${i + 1}`}
+                >
+                  <img src={urlFor(img).width(220).url()} alt={`${product.title} preview ${i + 1}`} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="product-detail-copy">
           <Link to="/" className="product-back">Back to Collection</Link>
@@ -111,12 +137,37 @@ export default function ProductPage({ showToast }) {
             {product.sex ? ` · ${product.sex}` : ''}
           </p>
           <p className="product-detail-price">EUR {product.price}</p>
-          <p className="product-detail-description">
-            Tailored for everyday elegance with Mediterranean ease.
-            Lightweight structure, clean lines, and premium fabric feel.
-          </p>
+          {showSizePicker && (
+            <div className="size-picker">
+              <p className="size-label">Size</p>
+              <div className="size-options">
+                {product.sizes.map(size => (
+                  <button
+                    key={size}
+                    className={`size-btn ${selectedSize === size ? 'active' : ''}`}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {Array.isArray(product.description) && product.description.length > 0 ? (
+            <div className="product-detail-description portable-text">
+              <PortableText value={product.description} />
+            </div>
+          ) : (
+            <p className="product-detail-description">
+              Tailored for everyday elegance with Mediterranean ease.
+              Lightweight structure, clean lines, and premium fabric feel.
+            </p>
+          )}
           <div className="product-detail-actions">
-            <button className="btn-primary" onClick={() => showToast(`"${product.title}" added to bag`)}>
+            <button
+              className="btn-primary"
+              onClick={() => showToast(`"${product.title}"${selectedSize ? ` (${selectedSize})` : ''} added to bag`)}
+            >
               Add to Bag
             </button>
             <button className="btn-ghost" onClick={() => showToast(`"${product.title}" wishlisted`)}>
