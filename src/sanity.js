@@ -21,6 +21,7 @@ export async function getProducts() {
       _id,
       title,
       category,
+      sex,
       price,
       subcategory,
       badge,
@@ -29,4 +30,48 @@ export async function getProducts() {
       accentColor,
     }
   `)
+}
+
+export async function getProductById(productId) {
+  return client.fetch(
+    `
+      *[_type == "product" && _id == $productId][0]{
+        _id,
+        title,
+        category,
+        sex,
+        price,
+        subcategory,
+        badge,
+        inStock,
+        image,
+        accentColor,
+      }
+    `,
+    { productId }
+  )
+}
+
+export async function getSimilarProducts({ productId, sex, category }) {
+  const field = sex ? 'sex' : 'category'
+  const value = sex || category
+  if (!value) return []
+
+  return client.fetch(
+    `
+      *[_type == "product" && _id != $productId && ${field} == $value] | order(order asc) [0...4] {
+        _id,
+        title,
+        category,
+        sex,
+        price,
+        subcategory,
+        badge,
+        inStock,
+        image,
+        accentColor,
+      }
+    `,
+    { productId, value }
+  )
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Marquee from './components/Marquee'
@@ -7,6 +8,7 @@ import About from './components/About'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import Toast from './components/Toast'
+import ProductPage from './components/ProductPage'
 
 export default function App() {
   const [toastMsg, setToastMsg] = useState('')
@@ -32,9 +34,8 @@ export default function App() {
     setTimeout(() => setToastMsg(''), 3000)
   }, [])
 
-  return (
+  const HomePage = () => (
     <>
-      <Nav />
       <Hero />
       <Marquee />
       <Collections showToast={showToast} />
@@ -42,6 +43,16 @@ export default function App() {
       <Contact showToast={showToast} />
       <Footer />
       <a href="#collections" className="mobile-sticky-cta">Shop Collection</a>
+    </>
+  )
+
+  return (
+    <>
+      <Nav />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/product/:productId" element={<ProductPage showToast={showToast} />} />
+      </Routes>
       <Toast message={toastMsg} />
     </>
   )
