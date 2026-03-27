@@ -35,6 +35,30 @@ export async function getProducts() {
   `)
 }
 
+export async function getNewArrivals() {
+  return client.fetch(
+    `
+      *[
+        _type == "product" &&
+        lower(coalesce(badge, "")) == "new" &&
+        inStock == true
+      ] | order(order asc) [0...8] {
+        _id,
+        title,
+        category,
+        sex,
+        price,
+        subcategory,
+        badge,
+        inStock,
+        image,
+        images,
+        accentColor
+      }
+    `
+  )
+}
+
 export async function getProductById(productId) {
   return client.fetch(
     `

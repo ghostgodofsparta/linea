@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Marquee from './components/Marquee'
+import NewArrivals from './components/NewArrivals'
 import Collections from './components/Collections'
 import About from './components/About'
 import Contact from './components/Contact'
@@ -38,6 +39,7 @@ export default function App() {
     <>
       <Hero />
       <Marquee />
+      <NewArrivals showToast={showToast} />
       <Collections showToast={showToast} />
       <About />
       <Contact showToast={showToast} />
