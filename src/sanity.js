@@ -40,8 +40,8 @@ export async function getNewArrivals() {
     `
       *[
         _type == "product" &&
-        lower(coalesce(badge, "")) == "new" &&
-        inStock == true
+        lower(coalesce(badge, "")) match "new" &&
+        coalesce(inStock, true) == true
       ] | order(order asc) [0...8] {
         _id,
         title,
