@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { getProducts, urlFor } from '../sanity'
 
-// Fallback static products shown while Sanity loads or if not configured
 const FALLBACK_PRODUCTS = [
   { _id: '1', title: 'Terra Linen Dress', category: 'women', price: 189, subcategory: 'Dresses', badge: 'New', accentColor: '#e8d5c8' },
   { _id: '2', title: 'Cobalt Linen Shirt', category: 'men', price: 135, subcategory: 'Tops', accentColor: '#d4e1f0' },
@@ -15,7 +14,7 @@ const FALLBACK_PRODUCTS = [
 
 const delayClasses = ['reveal-delay-1', 'reveal-delay-2', 'reveal-delay-3', 'reveal-delay-4']
 
-function ProductCard({ product, index, showToast }) {
+function ProductCard({ product, index, showToast, onProductClick }) {
   const ref = useRef(null)
   useEffect(() => {
     const el = ref.current
@@ -31,7 +30,8 @@ function ProductCard({ product, index, showToast }) {
   const badgeNew = product.badge?.toLowerCase() === 'new'
 
   return (
-    <div ref={ref} className={`product-card reveal ${delayClasses[index % 4]}`}>
+    <div ref={ref} className={`product-card reveal ${delayClasses[index % 4]}`}
+      onClick={() => onProductClick(product)} style={{ cursor: 'pointer' }}>
       <div className="product-image">
         <div className="product-bg" style={{ background: product.accentColor || '#e8d5c8' }}>
           {product.image
@@ -58,11 +58,11 @@ function ProductCard({ product, index, showToast }) {
             </div>
           )}
         </div>
-        <div className="product-actions">
-          <button className="action-btn primary" onClick={() => showToast(`"${product.title}" added to bag`)}>
-            Add to Bag
+        <div className="product-actions" onClick={e => e.stopPropagation()}>
+          <button className="action-btn primary" onClick={() => onProductClick(product)}>
+            View Item
           </button>
-          <button className="action-btn secondary">Wishlist</button>
+          <button className="action-btn secondary" onClick={() => showToast(`"${product.title}" wishlisted`)}>Wishlist</button>
         </div>
       </div>
       <div className="product-info">
@@ -78,14 +78,14 @@ function ProductCard({ product, index, showToast }) {
   )
 }
 
-export default function Collections({ showToast }) {
+export default function Collections({ showToast, onProductClick }) {
   const [activeFilter, setActiveFilter] = useState('all')
   const [products, setProducts] = useState(FALLBACK_PRODUCTS)
 
   useEffect(() => {
     getProducts()
       .then(data => { if (data?.length) setProducts(data) })
-      .catch(() => {}) // silently keep fallback data
+      .catch(() => {})
   }, [])
 
   const filtered = products.filter(p => activeFilter === 'all' || p.category === activeFilter)
@@ -109,7 +109,7 @@ export default function Collections({ showToast }) {
 
       <div className="products-grid">
         {filtered.map((p, i) => (
-          <ProductCard key={p._id} product={p} index={i} showToast={showToast} />
+          <ProductCard key={p._id} product={p} index={i} showToast={showToast} onProductClick={onProductClick} />
         ))}
       </div>
     </section>
